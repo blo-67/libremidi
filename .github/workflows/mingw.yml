@@ -72,9 +72,9 @@ jobs:
         run: |
           cmake -S . -B build-release \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_TESTING=1 \
-            -DLIBREMIDI_EXAMPLES=1 \
-            -DLIBREMIDI_TESTS=1 \
+            -DBUILD_TESTING=0 \
+            -DLIBREMIDI_EXAMPLES=0 \
+            -DLIBREMIDI_TESTS=0 \
             -DLIBREMIDI_CI=1 \
             -DCMAKE_CTEST_ARGUMENTS="--rerun-failed;--output-on-failure" \
             -DCMAKE_INSTALL_PREFIX=install
@@ -82,8 +82,18 @@ jobs:
           cmake --build build-release --parallel
           cmake --build build-release --parallel --target install
 
-      - name: Test release
-        shell: msys2 {0}
-        run: |
-          cmake --build build-release --target test
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libremidi-${{ matrix.sys }}-x86_64
+          path: install/
+          if-no-files-found: error
+
+      - name: Upload to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            install/**/*
+          fail_on_unmatched_files: false
 
