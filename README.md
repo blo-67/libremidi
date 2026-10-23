@@ -1,4 +1,4 @@
-# libremidi
+# libremidi windows release files
 
 [![Build status](https://github.com/jcelerier/libremidi/workflows/Build/badge.svg)](https://github.com/jcelerier/libremidi/actions)
 
